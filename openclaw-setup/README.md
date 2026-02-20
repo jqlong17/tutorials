@@ -12,6 +12,7 @@
 
 | 教程 | 简介 | 状态 |
 |------|------|:----:|
+| [📱 Telegram Bot 配置](./telegram-setup.md) | 从创建 Bot 到接入 OpenClaw 完整流程 | ✅ |
 | [🆓 OpenClaw + OpenRouter 免费模型](./openrouter-step35-free.md) | 接入 Step 3.5 Flash，零成本使用 | ✅ |
 
 ---

@@ -19,7 +19,7 @@
 
 | 教程 | 简介 | 状态 |
 |------|------|------|
-| [OpenClaw 入门配置](./openclaw-setup/README.md) | Gateway 配置、常见问题排查 | 🚧 待更新 |
+| [📱 Telegram Bot 配置](./openclaw-setup/telegram-setup.md) | 创建 Bot、配置 Gateway、配对授权完整流程 | ✅ 已完成 |
 | [🆓 OpenClaw + OpenRouter 免费模型](./openclaw-setup/openrouter-step35-free.md) | 使用 Step 3.5 Flash 零成本运行 | ✅ 已完成 |
 
 ---
