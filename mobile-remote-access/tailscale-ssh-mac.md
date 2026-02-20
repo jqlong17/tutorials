@@ -356,11 +356,112 @@ tailscale status | grep -E "direct|relay"
 
 ---
 
+## 🚀 懒人版：AI 一键配置
+
+觉得配置步骤太复杂？**直接把下面的提示词发给 AI**，让它帮你自动配置！
+
+### 💬 复制这段提示词
+
+```markdown
+我是一个 macOS 用户，想通过 Tailscale 实现手机远程 SSH 连接我的 Mac。
+
+请帮我完成以下配置：
+
+## 我的环境信息
+- 系统：macOS（Apple Silicon/Intel）
+- 用户名：[你的用户名，如 ruska]
+- 目标：手机通过 SSH 连接 Mac，并能远程管理进程
+
+## 请帮我执行
+
+### 1. 安装和启动 Tailscale
+```bash
+# 安装
+brew install tailscale
+
+# 启动服务
+sudo tailscaled install-system-daemon
+
+# 登录
+tailscale up
+
+# 获取 IP（记下来，手机连接需要）
+tailscale ip -4
+```
+
+### 2. 开启 SSH 服务
+```bash
+# 开启远程登录
+sudo systemsetup -setremotelogin on
+
+# 验证 SSH 是否工作
+ssh localhost
+```
+
+### 3. 设置开机自启（使用 PM2）
+```bash
+# 安装 PM2
+brew install pm2
+
+# 创建 Tailscale 守护脚本
+cat > ~/tailscale-keeper.sh << 'EOF'
+#!/bin/bash
+while true; do
+    if ! tailscale status &>/dev/null; then
+        echo "[$(date)] Tailscale 断开，重新连接..."
+        tailscale up --accept-routes
+    else
+        echo "[$(date)] Tailscale 连接正常 - IP: $(tailscale ip -4 2>/dev/null)"
+    fi
+    sleep 60
+done
+EOF
+chmod +x ~/tailscale-keeper.sh
+
+# 使用 PM2 管理
+pm2 start ~/tailscale-keeper.sh --name tailscale-keeper
+pm2 save
+pm2 startup
+```
+
+### 4. 手机端配置
+- 安装 Tailscale App（iOS/Android）
+- 使用与电脑相同的账号登录
+- 查看电脑分配的 IP（如 100.x.x.x）
+
+### 5. SSH 连接测试
+- 使用 Termius 等 SSH App
+- 主机：电脑的 Tailscale IP（100.x.x.x）
+- 端口：22
+- 用户名：macOS 用户名
+- 密码：macOS 登录密码
+
+## 验证步骤
+1. 确认 `tailscale status` 显示正常
+2. 确认 `tailscale ip -4` 返回 100.x.x.x
+3. 手机连接同一 Tailscale 网络
+4. 手机 SSH 连接到 100.x.x.x:22
+5. 成功登录后执行 `whoami` 验证
+
+## 可选：配置 Exit Node
+如果我想让手机流量都走 Mac（实现翻墙效果）：
+```bash
+# Mac 端执行
+sudo tailscale up --advertise-exit-node --accept-routes
+```
+然后在 https://login.tailscale.com/admin/machines 开启 "Use as exit node"，手机端选择 "Use as exit node"。
+
+请帮我检查每一步的执行结果，如果有报错告诉我原因和解决方法。
+```
+
+---
+
 ## 参考链接
 
 - [Tailscale 官网](https://tailscale.com)
 - [WireGuard 协议](https://www.wireguard.com/)
 - [macOS 远程登录官方文档](https://support.apple.com/guide/mac-help/allow-a-remote-computer-to-access-your-mac-mchlp1066/mac)
+- [Kimi CLI 官网](https://kimi.moonshot.cn) - 终端 AI 编程助手
 
 ---
 
